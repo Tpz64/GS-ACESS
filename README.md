@@ -13,8 +13,6 @@ A **Visão A.C.E.S.S.** inverte a lógica: em vez de forçar o trabalhador a se 
 -----
 
 ## 👥 Integrantes
-
-  * Preencha com os nomes dos membros da equipe:
       * André Neves - RM 553515
       * Thaís Leoncio - RM 553892
 -----
