@@ -20,8 +20,6 @@ public class FuncionarioController {
     @PostMapping
     public ResponseEntity<FuncionarioResponseDTO> cadastrar(
             @RequestBody @Valid FuncionarioRequestDTO request) {
-        // O @Valid garante que as regras de validação no DTO (ex: @Email, @NotBlank)
-        // sejam verificadas antes de chamar o Service.
         FuncionarioResponseDTO response = funcionarioService.cadastrar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
@@ -29,7 +27,6 @@ public class FuncionarioController {
     @GetMapping("/{id}")
     public ResponseEntity<FuncionarioResponseDTO> buscarPorId(@PathVariable Long id) {
         FuncionarioResponseDTO response = funcionarioService.buscarPorId(id);
-        // O Service já trata o caso de 'não encontrado' (404) via exceção.
         return ResponseEntity.ok(response);
     }
 
@@ -51,7 +48,6 @@ public class FuncionarioController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id) {
         funcionarioService.deletar(id);
-        // Retorna status 204 (No Content) para exclusão bem-sucedida.
         return ResponseEntity.noContent().build();
     }
 }

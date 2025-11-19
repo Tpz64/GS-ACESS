@@ -13,7 +13,6 @@ import java.util.Map;
 
 public class GlobalExceptionHandler {
 
-    // Trata a exceção de CEP Inválido (Regra de Negócio)
 
     @ExceptionHandler(CepNotFoundException.class)
     public ResponseEntity<Object> handleCepNotFoundException(CepNotFoundException ex) {
@@ -25,7 +24,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
-    // Opcional, mas altamente recomendado: Trata a exceção de Recurso Não Encontrado (404)
 
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<Object> handleNotFoundException(NotFoundException ex) {

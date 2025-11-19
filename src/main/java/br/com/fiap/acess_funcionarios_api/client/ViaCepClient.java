@@ -22,14 +22,10 @@ public class ViaCepClient {
         return this.webClient.get()
                 .uri("/{cep}/json/", cep)
                 .retrieve()
-                // 1. Tratamento de erros HTTP (4xx e 5xx)
                 .onStatus(HttpStatusCode::isError, response -> {
-                    // Se a ViaCEP retornar um 404/400, lançamos nossa exceção para o service
                     return Mono.error(new CepNotFoundException("Falha ao consultar CEP na API externa. Status: " + response.statusCode()));
                 })
-                // 2. Mapeamento do Corpo
                 .bodyToMono(ViaCepResponseDTO.class)
-                // 3. Bloqueio para retornar o objeto (se der erro de conexão, lança a exceção de rede aqui)
                 .block();
 
     }

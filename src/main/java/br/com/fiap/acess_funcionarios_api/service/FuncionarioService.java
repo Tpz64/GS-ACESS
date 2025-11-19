@@ -21,22 +21,16 @@ public class FuncionarioService {
     private final ViaCepClient viaCepClient;
 
     public FuncionarioResponseDTO cadastrar(FuncionarioRequestDTO requestDTO) {
-        // 1. Consumo de API Externa (ViaCEP)
         ViaCepResponseDTO cepResponse = viaCepClient.buscaEnderecoPorCep(requestDTO.getCep());
 
-        // 2. Tratamento de Erros e Exceções (CEP Inválido)
-        // CORREÇÃO: Usando .erro() e .localidade() do Record
         if (cepResponse == null || cepResponse.erro() || cepResponse.localidade() == null) {
             throw new CepNotFoundException("CEP inválido ou não encontrado: " + requestDTO.getCep());
         }
 
-        // 3. Mapeamento DTO -> Entidade (Domain)
         Funcionario funcionario = mapRequestToEntity(requestDTO, cepResponse);
 
-        // 4. Persistência de Dados
         Funcionario savedFuncionario = funcionarioRepository.save(funcionario);
 
-        // 5. Mapeamento Entidade -> Response DTO
         return mapEntityToResponse(savedFuncionario);
     }
 
@@ -57,21 +51,16 @@ public class FuncionarioService {
 
 
     public FuncionarioResponseDTO atualizar(Long id, FuncionarioRequestDTO requestDTO) {
-        // Verifica se o funcionário existe
         Funcionario funcionarioExistente = funcionarioRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Funcionário não encontrado com ID: " + id));
 
-        // 1. Atualiza endereço se o CEP mudou
         ViaCepResponseDTO cepResponse = viaCepClient.buscaEnderecoPorCep(requestDTO.getCep());
-        // CORREÇÃO: Usando .erro() do Record
         if (cepResponse == null || cepResponse.erro()) {
             throw new CepNotFoundException("Novo CEP inválido ou não encontrado: " + requestDTO.getCep());
         }
 
-        // 2. Atualiza os dados do funcionário
         updateEntityFromRequest(funcionarioExistente, requestDTO, cepResponse);
 
-        // 3. Salva a atualização
         Funcionario updatedFuncionario = funcionarioRepository.save(funcionarioExistente);
 
         return mapEntityToResponse(updatedFuncionario);
@@ -85,8 +74,6 @@ public class FuncionarioService {
         funcionarioRepository.deleteById(id);
     }
 
-    // --- Métodos Privados de Mapeamento (Simulação de Mapeador) ---
-
     private Funcionario mapRequestToEntity(FuncionarioRequestDTO dto, ViaCepResponseDTO cep) {
         Funcionario f = new Funcionario();
         f.setNome(dto.getNome());
@@ -95,7 +82,6 @@ public class FuncionarioService {
         f.setPreferenciaAcessibilidade(dto.getPreferenciaAcessibilidade());
         f.setAreaFuncao(dto.getAreaFuncao());
 
-        // Endereço - CORREÇÃO: Usando acessores de Record (.cep(), .localidade(), etc.)
         f.setCep(cep.cep());
         f.setLogradouro(cep.logradouro());
         f.setBairro(cep.bairro());
@@ -111,7 +97,6 @@ public class FuncionarioService {
         funcionario.setPreferenciaAcessibilidade(dto.getPreferenciaAcessibilidade());
         funcionario.setAreaFuncao(dto.getAreaFuncao());
 
-        // Endereço - CORREÇÃO: Usando acessores de Record (.cep(), .localidade(), etc.)
         funcionario.setCep(cep.cep());
         funcionario.setLogradouro(cep.logradouro());
         funcionario.setBairro(cep.bairro());
@@ -129,7 +114,6 @@ public class FuncionarioService {
         response.setPreferenciaAcessibilidade(funcionario.getPreferenciaAcessibilidade());
         response.setAreaFuncao(funcionario.getAreaFuncao());
 
-        // Endereço - Esta parte usa getters do JPA Entity (Funcionario), que estão corretos.
         response.setCep(funcionario.getCep());
         response.setLogradouro(funcionario.getLogradouro());
         response.setBairro(funcionario.getBairro());
